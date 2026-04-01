@@ -1,0 +1,586 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+html,body{background:#f5e6c8;font-family:Georgia,serif;color:#2a1a0a;min-height:100%;overscroll-behavior:none;}
+.screen{display:none;padding:12px;max-width:500px;margin:0 auto;padding-bottom:40px;}
+.screen.active{display:block;}
+.panel{background:#fffbef;border:3px solid #2a1a0a;border-radius:10px;padding:11px;margin-bottom:10px;box-shadow:3px 3px 0 #2a1a0a;}
+h1{font-family:Impact,sans-serif;color:#2a1a0a;text-shadow:3px 3px 0 #c8501a;font-size:2.6rem;text-align:center;letter-spacing:3px;line-height:1;}
+h2{font-family:Impact,sans-serif;font-size:1.2rem;letter-spacing:1px;margin-bottom:10px;}
+h3{font-size:0.9rem;margin-bottom:5px;font-family:Impact,sans-serif;letter-spacing:.5px;}
+.subtitle{font-style:italic;color:#c8501a;text-align:center;font-size:1rem;margin:4px 0 14px;}
+.btn{display:block;width:100%;padding:14px;background:#e8c840;border:3px solid #2a1a0a;border-radius:8px;font-family:Impact,sans-serif;font-size:1rem;color:#2a1a0a;text-align:center;cursor:pointer;box-shadow:3px 3px 0 #2a1a0a;margin-bottom:9px;letter-spacing:1px;min-height:48px;}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #2a1a0a;}
+.btn.green{background:#5cb85c;color:#fff;}
+.btn.blue{background:#4a90d9;color:#fff;}
+.btn.red{background:#d94a4a;color:#fff;}
+.btn.small{font-size:0.82rem;padding:11px;}
+.stat-row{display:flex;gap:5px;margin-bottom:7px;}
+.stat{flex:1;background:#fff9e0;border:2px solid #2a1a0a;border-radius:6px;padding:5px 3px;text-align:center;box-shadow:2px 2px 0 #2a1a0a;}
+.stat-label{font-size:0.5rem;color:#888;display:block;text-transform:uppercase;letter-spacing:1px;font-family:Arial,sans-serif;}
+.stat-val{font-family:Impact,sans-serif;font-size:1.05rem;}
+.money{color:#2a7a2a;}.red-t{color:#c82020;}
+.veg-item{display:flex;align-items:center;background:#fff9e0;border:2px solid #2a1a0a;border-radius:8px;padding:9px;margin-bottom:7px;box-shadow:2px 2px 0 #2a1a0a;}
+.veg-emoji{font-size:1.6rem;margin-right:8px;flex-shrink:0;}
+.veg-info{flex:1;min-width:0;}
+.veg-name{font-size:0.82rem;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.veg-sub{font-family:Impact,sans-serif;font-size:0.88rem;color:#2a7a2a;}
+.veg-sub.hot{color:#c82020;}
+.veg-btns{display:flex;gap:4px;flex-shrink:0;}
+.vb{padding:10px 10px;border:2px solid #2a1a0a;border-radius:5px;font-family:Impact,sans-serif;font-size:0.78rem;cursor:pointer;box-shadow:2px 2px 0 #2a1a0a;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;}
+.vb:active{transform:translate(1px,1px);}
+.vb.buy{background:#e8c840;}.vb.sell{background:#5cb85c;color:#fff;}.vb.plant{background:#a0d060;}
+.hood-item{background:#fff9e0;border:2px solid #2a1a0a;border-radius:8px;padding:12px;margin-bottom:7px;box-shadow:2px 2px 0 #2a1a0a;cursor:pointer;position:relative;min-height:60px;}
+.hood-item:active{transform:translate(2px,2px);}
+.hood-name{font-family:Impact,sans-serif;font-size:0.95rem;}
+.hood-desc{font-size:0.7rem;color:#666;font-family:Arial,sans-serif;margin-top:2px;}
+.hood-cost{font-family:Impact,sans-serif;color:#c82020;font-size:0.8rem;position:absolute;right:10px;top:12px;}
+.event-box{border:3px solid #c82020;border-radius:10px;padding:16px;margin-bottom:12px;box-shadow:3px 3px 0 #c82020;text-align:center;background:#ffe0e0;}
+.event-box.good{background:#e0ffe0;border-color:#2a7a2a;box-shadow:3px 3px 0 #2a7a2a;}
+.ev-emoji{font-size:2.8rem;display:block;margin-bottom:8px;}
+.ev-title{font-family:Impact,sans-serif;font-size:1.3rem;}
+.ev-desc{font-size:0.82rem;color:#444;font-family:Arial,sans-serif;margin-top:5px;line-height:1.5;}
+.day-bar{height:10px;background:#ddd;border:2px solid #2a1a0a;border-radius:8px;overflow:hidden;margin-bottom:8px;}
+.day-fill{height:100%;background:#e84040;border-radius:8px;transition:width 0.4s;}
+.msg{text-align:center;font-style:italic;font-size:0.85rem;color:#c8501a;margin:5px 0;min-height:20px;}
+.tab-bar{display:flex;gap:4px;margin-bottom:10px;}
+.tab{flex:1;padding:10px 2px;border:2px solid #2a1a0a;border-radius:6px;font-family:Impact,sans-serif;font-size:0.68rem;text-align:center;cursor:pointer;background:#ddd;box-shadow:2px 2px 0 #2a1a0a;min-height:44px;display:flex;align-items:center;justify-content:center;}
+.tab.active{background:#e8c840;}
+.tab:active{transform:translate(1px,1px);}
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+.inv-item{background:#fff9e0;border:2px solid #2a1a0a;border-radius:7px;padding:8px;text-align:center;box-shadow:2px 2px 0 #2a1a0a;}
+.inv-qty{font-family:Impact,sans-serif;font-size:1.2rem;color:#2a7a2a;}
+.badge{display:inline-block;padding:2px 5px;border-radius:4px;font-size:0.6rem;font-family:Impact,sans-serif;margin-left:3px;vertical-align:middle;}
+.badge.hot{background:#e84040;color:#fff;}.badge.cheap{background:#40c840;color:#fff;}
+.ticker{background:#2a1a0a;color:#e8c840;font-style:italic;font-size:0.78rem;padding:5px 9px;border-radius:6px;margin-bottom:8px;}
+.parade{font-size:1.8rem;text-align:center;letter-spacing:3px;margin:8px 0;}
+/* Garden */
+.plot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;}
+.plot{background:#c8a878;border:2px solid #2a1a0a;border-radius:8px;padding:8px 4px;text-align:center;box-shadow:2px 2px 0 #2a1a0a;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.plot.empty{background:#e0c898;cursor:pointer;}.plot.empty:active{transform:translate(1px,1px);}
+.plot.growing{background:#a8d878;}
+.plot.ready{background:#78c840;cursor:pointer;animation:pulse 1s infinite alternate;}
+@keyframes pulse{from{box-shadow:2px 2px 0 #2a1a0a;}to{box-shadow:2px 2px 0 #2a7a2a,0 0 8px #78c840;}}
+.plot-emoji{font-size:1.4rem;}
+.plot-label{font-size:0.6rem;font-family:Arial,sans-serif;color:#2a1a0a;margin-top:2px;line-height:1.2;}
+.plot-days{font-family:Impact,sans-serif;font-size:0.85rem;color:#2a1a0a;}
+/* Loan */
+.loan-box{background:#fff0f0;border:3px solid #c82020;border-radius:10px;padding:12px;margin-bottom:10px;box-shadow:3px 3px 0 #c82020;}
+.loan-label{font-family:Impact,sans-serif;font-size:0.85rem;color:#c82020;letter-spacing:.5px;}
+.loan-val{font-family:Impact,sans-serif;font-size:1.4rem;color:#c82020;}
+.loan-rate{font-size:0.72rem;color:#888;font-family:Arial,sans-serif;}
+.btn-row{display:flex;gap:8px;}
+.btn-row .btn{margin-bottom:0;}
+</style>
+
+<div id="screen-title" class="screen active">
+<div style="padding:16px 12px;">
+  <div class="parade">🥕 🍅 🥒 🥦 🧄</div>
+  <h1>SPROUT<br>WARS</h1>
+  <div class="subtitle">★ Toronto Edition ★</div>
+  <div class="panel" style="font-family:Arial,sans-serif;font-size:0.82rem;color:#444;line-height:1.6;">
+    Buy seeds. Plant your garden. Wait for harvest. Sell across Toronto hoods for maximum profit.<br><br>
+    Watch out for <b>raccoon gangs</b>, <b>bylaw officers</b>, and <b>Big Sal's loan shark rates</b>.<br><br>
+    <span style="font-family:Impact,sans-serif;color:#c82020;font-size:0.95rem;">GOAL: $10,000 by Day 30</span>
+  </div>
+  <button class="btn green" onclick="startGame()">🌱 START HUSTLIN'</button>
+  <button class="btn small" onclick="showScreen('screen-howto')">? How to Play</button>
+</div>
+</div>
+
+<div id="screen-howto" class="screen">
+  <h2>HOW TO PLAY</h2>
+  <div class="panel" style="font-family:Arial,sans-serif;font-size:0.8rem;line-height:1.7;color:#333;">
+    <b>1. Buy seeds</b> in the Market tab.<br>
+    <b>2. Plant them</b> in your Garden (20 plot limit).<br>
+    <b>3. Wait</b> — crops take 1–4 days to grow.<br>
+    <b>4. Harvest</b> ready crops (glowing green).<br>
+    <b>5. Travel</b> to a hood with high prices.<br>
+    <b>6. Sell</b> your harvest for profit.<br><br>
+    <b>Grow times:</b><br>
+    🌱 Fast (1–2 days): Kale, Beans, Chard, Cucumber<br>
+    🌿 Medium (3 days): Tomato, Zucchini, Carrot, Pepper<br>
+    🌳 Slow (4 days): Garlic, Potato (high value!)<br><br>
+    <b>Big Sal's Loans:</b> Borrow up to $1,000 at 10% interest per day. Compounds fast — pay it back!<br><br>
+    <b>Events:</b> Raccoon raids, heat domes, frost, bylaw fines, farmers market Sundays (2× prices every 7th day), Instagram hype.<br><br>
+    <b>Property tax:</b> $300 every 10 days.
+  </div>
+  <button class="btn" onclick="showScreen('screen-title')">← Back</button>
+</div>
+
+<div id="screen-game" class="screen">
+  <div class="stat-row">
+    <div class="stat"><span class="stat-label">Cash</span><span class="stat-val money" id="s-cash">$200</span></div>
+    <div class="stat"><span class="stat-label">Day</span><span class="stat-val" id="s-day">1/30</span></div>
+    <div class="stat"><span class="stat-label">Hood</span><span class="stat-val" id="s-hood" style="font-size:0.75rem;">Kensington</span></div>
+    <div class="stat"><span class="stat-label">Need</span><span class="stat-val red-t" id="s-need">$9800</span></div>
+  </div>
+  <div class="day-bar"><div class="day-fill" id="day-fill" style="width:3%"></div></div>
+  <div class="msg" id="msg">Welcome to Toronto, hustler!</div>
+  <div class="ticker" id="ticker">🎺 Market open — prices shifting across the city...</div>
+  <div class="tab-bar">
+    <div class="tab active" id="tab-market" onclick="switchTab('market')">🛒 Market</div>
+    <div class="tab" id="tab-garden" onclick="switchTab('garden')">🌱 Garden</div>
+    <div class="tab" id="tab-sell" onclick="switchTab('sell')">💰 Sell</div>
+    <div class="tab" id="tab-travel" onclick="switchTab('travel')">🚌 Travel</div>
+    <div class="tab" id="tab-loan" onclick="switchTab('loan')">🦈 Loan</div>
+  </div>
+
+  <!-- MARKET -->
+  <div id="panel-market">
+    <div class="panel">
+      <h3>Seeds for sale</h3>
+      <div style="font-family:Arial,sans-serif;font-size:0.7rem;color:#888;margin-bottom:7px;">Buy seeds → plant in Garden → harvest → sell</div>
+      <div id="mkt-list"></div>
+    </div>
+    <button class="btn small blue" onclick="useHype()">📱 Instagram Hype ($50) — spike local prices 2 days</button>
+  </div>
+
+  <!-- GARDEN -->
+  <div id="panel-garden" style="display:none">
+    <div class="panel">
+      <h3>Your Garden — <span id="plot-count">0</span>/20 plots used</h3>
+      <div style="font-family:Arial,sans-serif;font-size:0.7rem;color:#888;margin-bottom:8px;">🟢 Glowing = ready to harvest! Tap to pick.</div>
+      <div class="plot-grid" id="plot-grid"></div>
+    </div>
+    <div class="panel" style="background:#e8f8e0;">
+      <h3>Seeds in hand</h3>
+      <div style="font-family:Arial,sans-serif;font-size:0.7rem;color:#888;margin-bottom:7px;">Tap a seed to plant it (uses 1 plot)</div>
+      <div id="seed-list"></div>
+    </div>
+  </div>
+
+  <!-- SELL -->
+  <div id="panel-sell" style="display:none">
+    <div class="panel">
+      <h3>Sell harvest in <span id="sell-hood">Kensington</span></h3>
+      <div id="sell-list"></div>
+    </div>
+  </div>
+
+  <!-- TRAVEL -->
+  <div id="panel-travel" style="display:none">
+    <div class="panel">
+      <h3>Travel — $20 + 1 day per trip</h3>
+      <div style="font-family:Arial,sans-serif;font-size:0.7rem;color:#888;margin-bottom:8px;">Crops keep growing while you travel!</div>
+      <div id="hood-list"></div>
+    </div>
+    <button class="btn small" onclick="endDay()">😴 Rest here (end day, stay put)</button>
+  </div>
+
+  <!-- LOAN -->
+  <div id="panel-loan" style="display:none">
+    <div class="loan-box">
+      <div class="loan-label">🦈 BIG SAL'S LOANS</div>
+      <div style="font-family:Arial,sans-serif;font-size:0.72rem;color:#888;margin:2px 0 6px;">"I'm very reasonable. Usually."</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+        <span class="loan-label">Owed:</span>
+        <span class="loan-val" id="loan-owed">$0</span>
+      </div>
+      <div class="loan-rate" id="loan-rate-label">No debt. Stay that way.</div>
+    </div>
+    <div class="panel">
+      <h3>Borrow from Big Sal</h3>
+      <div style="font-family:Arial,sans-serif;font-size:0.72rem;color:#888;margin-bottom:8px;">10% interest per day. Compounds. Max $1,000 outstanding.</div>
+      <div class="btn-row">
+        <button class="btn small" onclick="borrow(100)">Borrow $100</button>
+        <button class="btn small" onclick="borrow(250)">Borrow $250</button>
+        <button class="btn small" onclick="borrow(500)">Borrow $500</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Pay back Big Sal</h3>
+      <div style="font-family:Arial,sans-serif;font-size:0.72rem;color:#888;margin-bottom:8px;">Pay down your debt before it balloons.</div>
+      <div class="btn-row">
+        <button class="btn small red" onclick="repay(100)">Pay $100</button>
+        <button class="btn small red" onclick="repay(250)">Pay $250</button>
+        <button class="btn small red" onclick="repayAll()">Pay All</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EVENT -->
+<div id="screen-event" class="screen">
+<div style="padding:20px;">
+  <div id="ev-card"></div>
+  <button class="btn" style="margin-top:8px;" onclick="dismissEvent()">Got it — keep hustlin'</button>
+</div>
+</div>
+
+<!-- PLANT PICKER -->
+<div id="screen-plant" class="screen">
+<div style="padding:16px;">
+  <h2>🌱 PLANT A SEED</h2>
+  <div style="font-family:Arial,sans-serif;font-size:0.82rem;color:#666;margin-bottom:12px;">Choose what to plant in this plot:</div>
+  <div id="plant-options"></div>
+  <button class="btn small" style="margin-top:8px;" onclick="showScreen('screen-game');switchTab(\'garden\')">← Cancel</button>
+</div>
+</div>
+
+<!-- GAME OVER -->
+<div id="screen-over" class="screen">
+<div style="padding:20px;text-align:center;">
+  <div id="over-content"></div>
+  <button class="btn green" style="margin-top:16px;" onclick="startGame()">🌱 Play Again</button>
+  <button class="btn small" onclick="showScreen('screen-title')">← Main Menu</button>
+</div>
+</div>
+
+<script>
+const VEG=[
+  {id:'tomato', name:'Tomatoes', e:'🍅', base:8,  max:42, grow:3},
+  {id:'zucchini',name:'Zucchini', e:'🥒', base:6,  max:30, grow:3},
+  {id:'kale',   name:'Kale',     e:'🥬', base:5,  max:28, grow:1},
+  {id:'garlic', name:'Garlic',   e:'🧄', base:12, max:60, grow:4},
+  {id:'beans',  name:'Beans',    e:'🫘', base:4,  max:22, grow:2},
+  {id:'peppers',name:'Peppers',  e:'🫑', base:10, max:50, grow:3},
+  {id:'cucumber',name:'Cucumber',e:'🥒', base:5,  max:26, grow:2},
+  {id:'carrots',name:'Carrots',  e:'🥕', base:7,  max:36, grow:3},
+  {id:'chard',  name:'Swiss Chard',e:'🥗',base:6, max:30, grow:1},
+  {id:'potato', name:'Potatoes', e:'🥔', base:4,  max:20, grow:4},
+];
+const HOODS=[
+  {id:'kensington',name:'Kensington Market',desc:'Hipsters pay premium for organic vibes',mod:1.3},
+  {id:'scarborough',name:'Scarborough',desc:'Wholesale prices, high volume',mod:0.8},
+  {id:'etobicoke',name:'Etobicoke',desc:'Suburban families, steady demand',mod:1.0},
+  {id:'yorkville',name:'Yorkville',desc:'Rich buyers pay top dollar',mod:1.65},
+  {id:'annex',name:'The Annex',desc:'UofT crowd loves cheap greens',mod:0.9},
+  {id:'regent',name:'Regent Park',desc:'Community vibes, fair prices',mod:1.0},
+  {id:'liberty',name:'Liberty Village',desc:'Tech bros want trendy veg only',mod:1.15},
+  {id:'northyork',name:'North York',desc:'Balanced market, no surprises',mod:1.0},
+  {id:'eastyork',name:'East York',desc:'Old school, bulk discounts',mod:0.85},
+  {id:'leslieville',name:'Leslieville',desc:'Brunch culture = pepper & tomato demand',mod:1.2},
+];
+const MAX_PLOTS=20;
+let G={};
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function initGame(){
+  G={
+    cash:200, day:1, goal:10000, hood:'kensington',
+    seeds:{}, harvest:{},
+    plots:[], // [{vegId, daysLeft}]
+    prices:{}, trips:0,
+    hypeOn:false, hypeDays:0,
+    bylawStrikes:0, dead:false,
+    loan:0, // outstanding loan balance
+    _afterEvent:null,
+    _plantPlotIdx:null,
+  };
+  VEG.forEach(v=>{G.seeds[v.id]=0;G.harvest[v.id]=0;});
+  buildPrices();
+}
+
+function buildPrices(){
+  G.prices={};
+  HOODS.forEach(h=>{
+    G.prices[h.id]={};
+    VEG.forEach(v=>{
+      let p=Math.round(v.base*h.mod*(0.75+Math.random()*1.5));
+      G.prices[h.id][v.id]=Math.max(v.base,Math.min(v.max,p));
+    });
+    if(h.id==='leslieville'){['peppers','tomato'].forEach(id=>{let v=VEG.find(x=>x.id===id);G.prices[h.id][id]=Math.min(v.max,Math.round(G.prices[h.id][id]*1.5));});}
+    if(h.id==='liberty'){['peppers','chard'].forEach(id=>{let v=VEG.find(x=>x.id===id);G.prices[h.id][id]=Math.min(v.max,Math.round(G.prices[h.id][id]*1.4));});}
+  });
+}
+function applyMult(m){HOODS.forEach(h=>VEG.forEach(v=>{G.prices[h.id][v.id]=Math.round(G.prices[h.id][v.id]*m);}));}
+function hoodMult(m,hid){VEG.forEach(v=>{G.prices[hid][v.id]=Math.round(G.prices[hid][v.id]*m);});}
+
+function startGame(){initGame();showScreen('screen-game');switchTab('market');setMsg('Welcome to Toronto, hustler! 🌱');renderAll();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function switchTab(tab){
+  ['market','garden','sell','travel','loan'].forEach(t=>{
+    document.getElementById('panel-'+t).style.display=t===tab?'block':'none';
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='market')renderMkt();
+  else if(tab==='garden')renderGarden();
+  else if(tab==='sell')renderSell();
+  else if(tab==='travel')renderHoods();
+  else if(tab==='loan')renderLoan();
+}
+
+function renderAll(){renderStats();renderMkt();}
+
+function renderStats(){
+  let h=HOODS.find(x=>x.id===G.hood);
+  document.getElementById('s-cash').textContent='$'+G.cash.toLocaleString();
+  document.getElementById('s-day').textContent=G.day+'/30';
+  document.getElementById('s-hood').textContent=h.name.split(' ')[0];
+  document.getElementById('s-need').textContent='$'+Math.max(0,G.goal-G.cash).toLocaleString();
+  document.getElementById('day-fill').style.width=Math.min(100,(G.day/30)*100)+'%';
+}
+
+function renderMkt(){
+  let html='';
+  VEG.forEach(v=>{
+    let p=G.prices[G.hood][v.id],avg=Math.round(v.base*1.2),hot=p>avg*1.4,cheap=p<avg*0.8;
+    html+=`<div class="veg-item">
+      <span class="veg-emoji">${v.e}</span>
+      <div class="veg-info">
+        <div class="veg-name">${v.name}${hot?'<span class="badge hot">HOT</span>':''}${cheap?'<span class="badge cheap">CHEAP</span>':''}</div>
+        <div class="veg-sub${hot?' hot':''}">${p}¢/seed · ${v.grow}d grow · have ${G.seeds[v.id]}</div>
+      </div>
+      <div class="veg-btns">
+        <button class="vb buy" onclick="buySeed('${v.id}',1)">BUY 1</button>
+        <button class="vb buy" style="background:#c8a020" onclick="buySeed('${v.id}',5)">×5</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('mkt-list').innerHTML=html;
+}
+
+function renderGarden(){
+  // plots
+  let html='';
+  for(let i=0;i<MAX_PLOTS;i++){
+    let p=G.plots[i];
+    if(!p){
+      html+=`<div class="plot empty" onclick="openPlantPicker(${i})"><span class="plot-emoji">🟫</span><div class="plot-label">Empty<br>tap to plant</div></div>`;
+    } else if(p.daysLeft<=0){
+      let v=VEG.find(x=>x.id===p.vegId);
+      html+=`<div class="plot ready" onclick="harvest(${i})"><span class="plot-emoji">${v.e}</span><div class="plot-days">READY!</div><div class="plot-label">tap harvest</div></div>`;
+    } else {
+      let v=VEG.find(x=>x.id===p.vegId);
+      let pct=Math.round(((VEG.find(x=>x.id===p.vegId).grow-p.daysLeft)/VEG.find(x=>x.id===p.vegId).grow)*100);
+      html+=`<div class="plot growing"><span class="plot-emoji">${v.e}</span><div class="plot-days">${p.daysLeft}d left</div><div class="plot-label">${v.name}</div></div>`;
+    }
+  }
+  document.getElementById('plot-count').textContent=G.plots.filter(p=>p).length;
+  document.getElementById('plot-grid').innerHTML=html;
+
+  // seeds in hand
+  let shtml='';let any=false;
+  VEG.forEach(v=>{
+    if(!G.seeds[v.id])return;any=true;
+    shtml+=`<div class="veg-item">
+      <span class="veg-emoji">${v.e}</span>
+      <div class="veg-info"><div class="veg-name">${v.name}</div><div class="veg-sub">Seeds: ${G.seeds[v.id]} · ${v.grow}d to grow</div></div>
+      <div class="veg-btns"><button class="vb plant" onclick="plantFromSeedList('${v.id}')">PLANT</button></div>
+    </div>`;
+  });
+  if(!any)shtml='<div style="text-align:center;color:#888;font-family:Arial,sans-serif;padding:10px;">No seeds — buy some in Market!</div>';
+  document.getElementById('seed-list').innerHTML=shtml;
+}
+
+function openPlantPicker(plotIdx){
+  let hasSeed=VEG.some(v=>G.seeds[v.id]>0);
+  if(!hasSeed){setMsg('No seeds in hand! Buy some first.');return;}
+  G._plantPlotIdx=plotIdx;
+  let html='';
+  VEG.forEach(v=>{
+    if(!G.seeds[v.id])return;
+    html+=`<div class="veg-item" style="cursor:pointer" onclick="plantAt(${plotIdx},'${v.id}')">
+      <span class="veg-emoji">${v.e}</span>
+      <div class="veg-info"><div class="veg-name">${v.name}</div><div class="veg-sub">Seeds: ${G.seeds[v.id]} · ${v.grow}d grow</div></div>
+      <div class="vb plant" style="padding:10px 12px;">PLANT</div>
+    </div>`;
+  });
+  document.getElementById('plant-options').innerHTML=html;
+  showScreen('screen-plant');
+}
+
+function plantAt(plotIdx,vegId){
+  if(!G.seeds[vegId]){setMsg('No seeds!');return;}
+  let v=VEG.find(x=>x.id===vegId);
+  G.seeds[vegId]--;
+  G.plots[plotIdx]={vegId,daysLeft:v.grow};
+  showScreen('screen-game');
+  switchTab('garden');
+  setMsg('Planted '+v.e+' '+v.name+'! Ready in '+v.grow+' day'+(v.grow>1?'s':'')+'.');
+}
+
+function plantFromSeedList(vegId){
+  let emptyIdx=G.plots.findIndex((p,i)=>i<MAX_PLOTS&&!p);
+  if(emptyIdx===-1){
+    // find first undefined slot up to MAX_PLOTS
+    for(let i=0;i<MAX_PLOTS;i++){if(!G.plots[i]){emptyIdx=i;break;}}
+  }
+  if(emptyIdx===-1){setMsg('Garden full! (20 plots max)');return;}
+  plantAt(emptyIdx,vegId);
+}
+
+function harvest(plotIdx){
+  let p=G.plots[plotIdx];
+  if(!p||p.daysLeft>0)return;
+  let v=VEG.find(x=>x.id===p.vegId);
+  G.harvest[p.vegId]++;
+  G.plots[plotIdx]=null;
+  setMsg('Harvested '+v.e+' '+v.name+'! Go sell it!');
+  renderGarden();renderStats();
+}
+
+function renderSell(){
+  let h=HOODS.find(x=>x.id===G.hood);
+  document.getElementById('sell-hood').textContent=h.name;
+  let html='';let any=false;
+  VEG.forEach(v=>{
+    if(!G.harvest[v.id])return;any=true;
+    let sell=Math.round(G.prices[G.hood][v.id]*2.5);
+    let q5=Math.min(G.harvest[v.id],5);
+    html+=`<div class="veg-item">
+      <span class="veg-emoji">${v.e}</span>
+      <div class="veg-info"><div class="veg-name">${v.name}</div><div class="veg-sub">$${sell} each · have ${G.harvest[v.id]}</div></div>
+      <div class="veg-btns">
+        <button class="vb sell" onclick="sellVeg('${v.id}',1)">SELL 1</button>
+        <button class="vb sell" style="background:#2a8a2a" onclick="sellVeg('${v.id}',${q5})">×${q5}</button>
+      </div>
+    </div>`;
+  });
+  if(!any)html='<div style="text-align:center;color:#888;font-family:Arial,sans-serif;padding:16px;">Nothing harvested yet!<br>Plant → grow → harvest first.</div>';
+  document.getElementById('sell-list').innerHTML=html;
+}
+
+function renderHoods(){
+  let html='';
+  HOODS.forEach(h=>{
+    if(h.id===G.hood)return;
+    html+=`<div class="hood-item" onclick="travel('${h.id}')">
+      <span class="hood-cost">$20+1d</span>
+      <div class="hood-name">${h.name}</div>
+      <div class="hood-desc">${h.desc}</div>
+    </div>`;
+  });
+  document.getElementById('hood-list').innerHTML=html;
+}
+
+function renderLoan(){
+  document.getElementById('loan-owed').textContent='$'+Math.round(G.loan).toLocaleString();
+  document.getElementById('loan-rate-label').textContent=G.loan>0
+    ?'10% interest per day. Tomorrow: $'+Math.round(G.loan*1.1).toLocaleString()+' owed.'
+    :'No debt. Stay that way.';
+}
+
+function buySeed(id,qty){
+  let v=VEG.find(x=>x.id===id),cost=G.prices[G.hood][id]*qty;
+  if(G.cash<cost){setMsg('Not enough cash! 💸');return;}
+  G.cash-=cost;G.seeds[id]+=qty;
+  setMsg('Bought '+qty+'× '+v.e+' seeds for $'+cost);
+  renderStats();renderMkt();
+}
+
+function sellVeg(id,qty){
+  if(G.harvest[id]<qty){setMsg("Don't have that many!");return;}
+  let v=VEG.find(x=>x.id===id),price=Math.round(G.prices[G.hood][id]*2.5),total=price*qty;
+  G.cash+=total;G.harvest[id]-=qty;
+  setMsg('Sold '+qty+'× '+v.e+' for $'+total+'! 💰');
+  renderStats();renderSell();checkWin();
+}
+
+function borrow(amt){
+  if(G.loan>=1000){setMsg("Big Sal won't lend more — pay back first!");return;}
+  let canBorrow=Math.min(amt,1000-G.loan);
+  G.loan+=canBorrow;G.cash+=canBorrow;
+  setMsg('Borrowed $'+canBorrow+' from Big Sal 🦈');
+  renderStats();renderLoan();
+}
+
+function repay(amt){
+  if(G.loan<=0){setMsg('No debt to pay!');return;}
+  let pay=Math.min(amt,G.loan,G.cash);
+  if(pay<=0){setMsg('Not enough cash!');return;}
+  G.cash-=pay;G.loan-=pay;
+  setMsg('Paid $'+Math.round(pay)+' to Big Sal.');
+  renderStats();renderLoan();
+}
+
+function repayAll(){
+  if(G.loan<=0){setMsg('No debt!');return;}
+  let pay=Math.min(G.loan,G.cash);
+  G.cash-=pay;G.loan=Math.max(0,G.loan-pay);
+  setMsg(G.loan>0?'Paid $'+Math.round(pay)+' — still owe $'+Math.round(G.loan):'Fully paid off Big Sal! 🎉');
+  renderStats();renderLoan();
+}
+
+function travel(hoodId){
+  if(G.cash<20){setMsg('Need $20 for the TTC! 🚌');return;}
+  G.cash-=20;G.hood=hoodId;G.trips++;
+  let h=HOODS.find(x=>x.id===hoodId);
+  advanceDay('Arrived at '+h.name+'!');
+  switchTab('market');
+}
+
+function endDay(){advanceDay('Rested. New day!');}
+
+function advanceDay(msg){
+  G.day++;
+  // Grow all plots by 1 day
+  for(let i=0;i<MAX_PLOTS;i++){if(G.plots[i]&&G.plots[i].daysLeft>0)G.plots[i].daysLeft--;}
+  // Loan interest
+  if(G.loan>0){
+    let interest=Math.round(G.loan*0.1);
+    G.loan+=interest;
+    if(interest>0)setMsg('Big Sal charged $'+interest+' interest! 🦈');
+  }
+  buildPrices();
+  if(G.hypeOn){hoodMult(1.35,G.hood);G.hypeDays--;if(G.hypeDays<=0)G.hypeOn=false;}
+  renderStats();
+  if(msg)setMsg(msg);
+  checkScheduled();
+  if(Math.random()<0.28)doRandomEvent();
+  else{if(G.day>30||G.dead)endGame();else checkWin();}
+}
+
+function checkScheduled(){
+  if(G.day%10===0)showEvent('bad','💸','Property Tax Time!','City of Toronto demands $300. Pain.',()=>{G.cash=Math.max(0,G.cash-300);});
+  else if(G.day%7===0)showEvent('good','🛒','Farmers Market Sunday!','2× prices all day citywide!',()=>{applyMult(2);});
+}
+
+function doRandomEvent(){
+  let pool=[
+    ['bad','🦝','Raccoon Gang!','Lost 30% of your harvest!',()=>{VEG.forEach(v=>{G.harvest[v.id]=Math.floor(G.harvest[v.id]*0.7);});}],
+    ['bad','🌡️','Heat Dome!','Prices drop 20% citywide.',()=>{applyMult(0.8);}],
+    ['bad','❄️','Frost Warning!','Yields shrink, prices spike.',()=>{applyMult(1.15);for(let i=0;i<MAX_PLOTS;i++){if(G.plots[i])G.plots[i].daysLeft=Math.min(G.plots[i].daysLeft+1,99);};}],
+    ['good','📱','You Went Viral!','Local prices up 30%!',()=>{hoodMult(1.3,G.hood);}],
+    ['good','🌿','Black Market Seeds!','Free 3× garlic seeds!',()=>{G.seeds['garlic']+=3;}],
+    ['good','♻️','Compost Windfall!','All growing crops speed up 1 day!',()=>{for(let i=0;i<MAX_PLOTS;i++){if(G.plots[i]&&G.plots[i].daysLeft>0)G.plots[i].daysLeft--;}}],
+  ];
+  if(G.trips>=4)pool.push(['bad','🚨','Bylaw Officer!','$150 fine + warning!',()=>{G.cash=Math.max(0,G.cash-150);G.bylawStrikes++;G.trips=0;if(G.bylawStrikes>=3)G.dead=true;}]);
+  if(G.loan>500)pool.push(['bad','🦈','Big Sal Visits!','You look nervous. He adds 20% to your debt.',()=>{G.loan=Math.round(G.loan*1.2);}]);
+  let ev=pool[rnd(0,pool.length-1)];
+  showEvent(...ev);
+}
+
+function showEvent(type,emoji,title,desc,fn){
+  if(fn)fn();
+  document.getElementById('ev-card').innerHTML=`<div class="event-box${type==='good'?' good':''}">
+    <span class="ev-emoji">${emoji}</span>
+    <div class="ev-title">${title}</div>
+    <div class="ev-desc">${desc}${G.bylawStrikes>=3?'<br><b>3 STRIKES — SHUT DOWN!</b>':''}</div>
+  </div>`;
+  G._afterEvent=()=>{renderStats();checkWin();if(G.day>30||G.dead)endGame();};
+  showScreen('screen-event');
+}
+
+function dismissEvent(){
+  showScreen('screen-game');
+  if(G._afterEvent){G._afterEvent();G._afterEvent=null;}
+}
+
+function useHype(){
+  if(G.cash<50){setMsg('Need $50 for the influencer! 📱');return;}
+  G.cash-=50;G.hypeOn=true;G.hypeDays=2;hoodMult(1.35,G.hood);
+  setMsg('📱 Going viral! Prices spiked here for 2 days!');
+  renderStats();renderMkt();
+}
+
+function checkWin(){
+  if(G.cash>=G.goal)endGame(true);
+  else if(G.cash<=0&&totalHarvest()===0&&totalSeeds()===0&&G.plots.every(p=>!p))endGame(false);
+}
+function totalHarvest(){return VEG.reduce((s,v)=>s+G.harvest[v.id],0);}
+function totalSeeds(){return VEG.reduce((s,v)=>s+G.seeds[v.id],0);}
+
+function endGame(win){
+  let won=win||(G.cash>=G.goal);
+  let html=won
+    ?`<div class="event-box good"><span class="ev-emoji">🏆</span><div class="ev-title">YOU WIN!</div><div class="ev-desc">Hit $${G.cash.toLocaleString()} by Day ${G.day}.<br>Toronto's veggie kingpin!</div></div><div class="parade" style="margin:14px 0;">🥕 🍅 🥒 🌽 🥦</div>`
+    :`<div class="event-box"><span class="ev-emoji">💀</span><div class="ev-title">GAME OVER</div><div class="ev-desc">${G.dead?'3 bylaw strikes — shut down!':G.day>30?"Time's up!":'You went broke!'}<br>Final: $${G.cash.toLocaleString()} of $${G.goal.toLocaleString()}</div></div><div style="font-style:italic;color:#888;font-family:Arial,sans-serif;margin-top:10px;">The raccoons win this time.</div>`;
+  document.getElementById('over-content').innerHTML=html;
+  showScreen('screen-over');
+}
+
+function setMsg(t){document.getElementById('msg').textContent=t;}
+</script>
